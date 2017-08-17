@@ -1,5 +1,5 @@
 {
-   "host":"localhost",
+   "host":"0.0.0.0",
    "port":"8080",
    "channelsList": ["mychannel"],
    "GOPATH":"../artifacts",
@@ -13,9 +13,9 @@
       }
    ],
    "mysql":{
-      "host":"172.16.10.162",
-      "database":"fabricexplorer",
-      "username":"root",
-      "passwd":"123456"
+      "host":"localhost",
+      "database":"chain",
+      "username":"chainuser",
+      "passwd":"heatonn1"
    }
 }

@@ -3,3 +3,6 @@ node_modules/*
 test/*
 explorer_client/node_modules/*
 .log
+artifacts/
+npm-debug.log
+log.log
