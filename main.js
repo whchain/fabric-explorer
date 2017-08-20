@@ -10,7 +10,8 @@ var http = require('http').Server(app);
 var bodyParser = require('body-parser');
 var trustchain = require('./service/trustchainservice.js');
 var session = require('express-session');
-var FileStore = require('session-file-store')(session);
+var helper = require('./app/helper.js');
+var logger = helper.getLogger('metricservice');
 
 require('./socket/websocketserver.js')(http)
 
@@ -27,17 +28,9 @@ app.use(express.static(path.join(__dirname, 'explorer_client')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-var identityKey = 'grapebaba';
 
 app.use(session({
-    name: identityKey,
     secret: 'heatonn1',  // 用来对session id相关的cookie进行签名
-    store: new FileStore(),  // 本地存储session（文本文件，也可以选择其他store，比如redis的）
-    saveUninitialized: false,  // 是否自动保存未初始化的会话，建议false
-    resave: false,  // 是否每次都重新保存会话，建议false
-    cookie: {
-        maxAge: 10 * 1000  // 有效期，单位是毫秒
-    }
 }));
 
 var query = require('./app/query.js')
@@ -174,18 +167,39 @@ app.post('/channellist', function (req, res) {
 app.post('/querybyuid', function (req, res) {
     var uid = req.body.uid;
     var sess = req.session;
-    var loginUser = sess.loginUser;
+    var loginUser = findUserByName(sess.loginUser);
+    logger.info("uid"+uid);
+    logger.info("sess"+sess);
+    logger.info("loginuser"+loginUser);
     if (!loginUser) {
         res.status(401).send('not login');
     } else {
-        if ('manu' === loginUser.owner) {
+        if ('茅台' === loginUser.owner) {
             trustchain.queryDevice(uid,'mychannel','mycc').then(function (msg) {
+                if(msg.indexOf("Device not enrolled")>-1){
+                    msg="Device not enrolled"
+                }else if(msg.indexOf("Wine not enrolled")>-1){
+                    msg="Wine not enrolled"
+                }else if(msg.indexOf("Device already enrolled")>-1){
+                    msg="Device already enrolled"
+                }else if(msg.indexOf("Device already used")>-1){
+                    msg="Device already used"
+                }
                 res.status(200).send(msg)
             }).catch(function (e) {
                 res.status(400).json({err: e})
             })
         } else {
             trustchain.queryWine(uid,'mychannel','mycc').then(function (msg) {
+                if(msg.indexOf("Device not enrolled")>-1){
+                    msg="Device not enrolled"
+                }else if(msg.indexOf("Wine not enrolled")>-1){
+                    msg="Wine not enrolled"
+                }else if(msg.indexOf("Device already enrolled")>-1){
+                    msg="Device already enrolled"
+                }else if(msg.indexOf("Device already used")>-1){
+                    msg="Device already used"
+                }
                 res.status(200).send(msg)
             }).catch(function (e) {
                 res.status(400).json({err: e})
@@ -204,15 +218,24 @@ app.post('/wines',function (req,res) {
     var outPlace=req.body.out_place;
 
     var sess = req.session;
-    var loginUser = sess.loginUser;
+    var loginUser = findUserByName(sess.loginUser);
     if (!loginUser) {
         res.status(401).send({err:"not login"});
     }else{
-        if(loginUser.owner!=="manu"){
+        if(loginUser.owner!=="茅台"){
             res.status(401).send({err:"invalid user"});
         }
 
         trustchain.enrollWine(uid,owner,model,produceDate,producePlace,outDate,outPlace,'mychannel','mycc').then(function (msg) {
+                if(msg.indexOf("Device not enrolled")>-1){
+                    msg="Device not enrolled"
+                }else if(msg.indexOf("Wine not enrolled")>-1){
+                    msg="Wine not enrolled"
+                }else if(msg.indexOf("Device already enrolled")>-1){
+                    msg="Device already enrolled"
+                }else if(msg.indexOf("Device already used")>-1){
+                    msg="Device already used"
+                }
             res.status(200).send(msg)
         }).catch(function (e) {
             res.status(400).json({err:e})
@@ -221,26 +244,44 @@ app.post('/wines',function (req,res) {
 
 });
 
-app.put('/wines',function (req,res) {
-    var uid=req.body.uid;
-
-    var sess = req.session;
-    var loginUser = sess.loginUser;
-    if (!loginUser) {
-        res.status(401).send({err:"not login"});
-    }else{
-        if(loginUser.owner!=="dealer"){
-            res.status(401).send({err:"invalid user"});
-        }
-
-        trustchain.transferWine(uid,loginUser.owner).then(function (msg) {
+app.post('/devices', function (req,res) {
+        var uid=req.body.uid;
+        trustchain.enrollDevice(uid,'mychannel','mycc').then(function (msg) {
+                if(msg.indexOf("Device not enrolled")>-1){
+                    msg="Device not enrolled"
+                }else if(msg.indexOf("Wine not enrolled")>-1){
+                    msg="Wine not enrolled"
+                }else if(msg.indexOf("Device already enrolled")>-1){
+                    msg="Device already enrolled"
+                }else if(msg.indexOf("Device already used")>-1){
+                    msg="Device already used"
+                }
             res.status(200).send(msg)
         }).catch(function (e) {
             res.status(400).json({err:e})
-        })
-    }
-
+        });
 });
+
+//app.put('/wines',function (req,res) {
+//    var uid=req.body.uid;
+//
+//    var sess = req.session;
+//    var loginUser = sess.loginUser;
+//    if (!loginUser) {
+//        res.status(401).send({err:"not login"});
+//    }else{
+//        if(loginUser.owner!=="dealer"){
+//            res.status(401).send({err:"invalid user"});
+//        }
+//
+//        trustchain.transferWine(uid,loginUser.owner).then(function (msg) {
+//            res.status(200).send(msg)
+//        }).catch(function (e) {
+//            res.status(400).json({err:e})
+//        })
+//    }
+//
+//});
 
 var users = require('./utils/user').items;
 
@@ -250,19 +291,19 @@ var findUser = function(name, password){
     });
 };
 
+var findUserByName = function(name){
+    return users.find(function(item){
+        return item.name === name ;
+    });
+};
+
 // 登录接口
 app.post('/login', function(req, res, next){
     var user = findUser(req.body.username, req.body.password);
 
     if(user){
-        req.session.regenerate(function(err) {
-            if(err){
-                return res.status(400).json({err: '登录失败'});
-            }
-
-            req.session.loginUser = user;
-            res.status(200).json({err: '登录成功'});
-        });
+        req.session.loginUser=user.name;
+        res.send(user)
     }else{
         res.status(400).json({err: '账号或密码错误'});
     }
@@ -281,9 +322,7 @@ app.get('/logout', function(req, res, next){
             return;
         }
 
-        // req.session.loginUser = null;
-        res.clearCookie(identityKey);
-        res.status(200).send("")
+        res.end("")
     });
 });
 

@@ -14,10 +14,10 @@
   },
   "dependencies": {
     "body-parser": "^1.17.2",
-
     "co": "^4.6.0",
     "ejs": "^2.5.6",
     "express": "^4.15.3",
+    "express-session": "^1.15.5",
     "fabric-ca-client": "^1.0.0",
     "fabric-client": "^1.0.0",
     "fast-stats": "0.0.3",
