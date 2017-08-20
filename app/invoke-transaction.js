@@ -44,6 +44,7 @@ var invokeChaincode = function(peerNames, channelName, chaincodeName, fcn, args,
 		if (targets)
 			request.targets = targets;
 
+		logger.info('grapebaba request------'+request);
 		return channel.sendTransactionProposal(request);
 	}, (err) => {
 		logger.error('Failed to enroll user \'' + username + '\'. ' + err);
