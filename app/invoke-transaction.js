@@ -86,7 +86,7 @@ var invokeChaincode = function(peerNames, channelName, chaincodeName, fcn, args,
 				});
 			}
 
-			var eventhubs = helper.newEventHubs(peerNames, org);
+			var eventhubs = buildEventHubs(peerNames, org);
 			for (let key in eventhubs) {
 				let eh = eventhubs[key];
 				eh.connect();
@@ -163,6 +163,15 @@ function buildTarget(peer, org) {
     }
 
     return target;
+}
+
+function buildEventHubs(peer,org) {
+    var targets = null;
+    if (typeof peer !== 'undefined') {
+        targets = helper.newEventHubs([helper.getPeerAddressByName(org, peer)],org);
+    }
+
+    return targets;
 }
 
 exports.invokeChaincode = invokeChaincode;
