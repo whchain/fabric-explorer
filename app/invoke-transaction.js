@@ -26,7 +26,7 @@ var invokeChaincode = function(peerNames, channelName, chaincodeName, fcn, args,
 	logger.debug(util.format('\n============ invoke transaction on organization %s ============\n', org));
 	var client = helper.getClientForOrg(org);
 	var channel = helper.getChannelForOrg(org);
-	var targets = (peerNames) ? helper.newPeers(peerNames, org) : undefined;
+	var targets = buildTarget(peerNames,org);
 	var tx_id = null;
 
 	return helper.getRegisteredUsers(username, org).then((user) => {
@@ -154,5 +154,15 @@ var invokeChaincode = function(peerNames, channelName, chaincodeName, fcn, args,
 			err;
 	});
 };
+
+function buildTarget(peer, org) {
+    var target = null;
+    if (typeof peer !== 'undefined') {
+        let targets = helper.newPeers([helper.getPeerAddressByName(org, peer)]);
+        if (targets && targets.length > 0) target = targets[0];
+    }
+
+    return target;
+}
 
 exports.invokeChaincode = invokeChaincode;
