@@ -138,6 +138,7 @@ var invokeChaincode = function(peerNames, channelName, chaincodeName, fcn, args,
 			err;
 	}).then((response) => {
 		if (response.status === 'SUCCESS') {
+            logger.info(response);
 			logger.info('Successfully sent transaction to the orderer.');
 			return tx_id.getTransactionID();
 		} else {
