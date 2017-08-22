@@ -62,6 +62,7 @@ var invokeChaincode = function(peerNames, channelName, chaincodeName, fcn, args,
 				logger.info('transaction proposal was good');
 			} else {
 				logger.error('transaction proposal was bad');
+				Promise.reject(proposalResponses[0]);
 			}
 			all_good = all_good & one_good;
 		}
@@ -131,9 +132,7 @@ var invokeChaincode = function(peerNames, channelName, chaincodeName, fcn, args,
 			logger.error(
 				'Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...'
 			);
-			logger.info(proposalResponses);
-			logger.info(proposalResponses.message);
-			return proposalResponses.message;
+			return 'Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...';
 		}
 	}, (err) => {
 		logger.error('Failed to send proposal due to error: ' + err.stack ? err.stack :
@@ -148,13 +147,12 @@ var invokeChaincode = function(peerNames, channelName, chaincodeName, fcn, args,
 			return tx_id.getTransactionID();
 		} else {
 			logger.error('Failed to order the transaction. Error code: ' + response.status);
-			return 'Failed to order the transaction. Error code: ' + response;
+			return 'Failed to order the transaction. Error code: ' + response.status;
 		}
 	}, (err) => {
 		logger.error('Failed to send transaction due to error: ' + err.stack ? err
 			.stack : err);
-		return 'Failed to send transaction due to error: ' + err.stack ? err.stack :
-			err;
+		return err.message;
 	});
 };
 
