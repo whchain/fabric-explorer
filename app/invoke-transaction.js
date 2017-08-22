@@ -62,7 +62,7 @@ var invokeChaincode = function(peerNames, channelName, chaincodeName, fcn, args,
 				logger.info('transaction proposal was good');
 			} else {
 				logger.error('transaction proposal was bad');
-				Promise.reject(proposalResponses[0]);
+				return Promise.reject(proposalResponses[0]);
 			}
 			all_good = all_good & one_good;
 		}
