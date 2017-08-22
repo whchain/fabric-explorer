@@ -26,7 +26,7 @@ var invokeChaincode = function(peerNames, channelName, chaincodeName, fcn, args,
 	logger.debug(util.format('\n============ invoke transaction on organization %s ============\n', org));
 	var client = helper.getClientForOrg(org);
 	var channel = helper.getChannelForOrg(org);
-	var targets = (peerNames) ? helper.newPeers(peerNames, org) : undefined;
+	var targets = buildTarget(peerNames,org);
 	var tx_id = null;
 
 	return helper.getRegisteredUsers(username, org).then((user) => {
@@ -44,6 +44,7 @@ var invokeChaincode = function(peerNames, channelName, chaincodeName, fcn, args,
 		if (targets)
 			request.targets = targets;
 
+		logger.info('grapebaba request------'+request.targets);
 		return channel.sendTransactionProposal(request);
 	}, (err) => {
 		logger.error('Failed to enroll user \'' + username + '\'. ' + err);
@@ -85,7 +86,7 @@ var invokeChaincode = function(peerNames, channelName, chaincodeName, fcn, args,
 				});
 			}
 
-			var eventhubs = helper.newEventHubs(peerNames, org);
+			var eventhubs = buildEventHubs(peerNames, org);
 			for (let key in eventhubs) {
 				let eh = eventhubs[key];
 				eh.connect();
@@ -137,7 +138,9 @@ var invokeChaincode = function(peerNames, channelName, chaincodeName, fcn, args,
 		return 'Failed to send proposal due to error: ' + err.stack ? err.stack :
 			err;
 	}).then((response) => {
+        logger.info('grapebaba--------'+response);
 		if (response.status === 'SUCCESS') {
+
 			logger.info('Successfully sent transaction to the orderer.');
 			return tx_id.getTransactionID();
 		} else {
@@ -151,5 +154,24 @@ var invokeChaincode = function(peerNames, channelName, chaincodeName, fcn, args,
 			err;
 	});
 };
+
+function buildTarget(peer, org) {
+    var target = null;
+    if (typeof peer !== 'undefined') {
+        let targets = helper.newPeers([helper.getPeerAddressByName(org, peer)]);
+        if (targets && targets.length > 0) target = targets[0];
+    }
+
+    return target;
+}
+
+function buildEventHubs(peer,org) {
+    var targets = null;
+    if (typeof peer !== 'undefined') {
+        targets = helper.newEventHubs([helper.getPeerAddressByName(org, peer)],org);
+    }
+
+    return targets;
+}
 
 exports.invokeChaincode = invokeChaincode;
