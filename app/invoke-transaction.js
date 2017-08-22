@@ -131,6 +131,8 @@ var invokeChaincode = function(peerNames, channelName, chaincodeName, fcn, args,
 			logger.error(
 				'Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...'
 			);
+			logger.info(proposalResponses);
+			logger.info(proposalResponses.message);
 			return proposalResponses.message;
 		}
 	}, (err) => {
