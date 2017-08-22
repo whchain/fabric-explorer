@@ -51,6 +51,7 @@ var invokeChaincode = function(peerNames, channelName, chaincodeName, fcn, args,
 		throw new Error('Failed to enroll user \'' + username + '\'. ' + err);
 	}).then((results) => {
 		var proposalResponses = results[0];
+		logger.info('grapebaba proposal responses--------------------'+proposalResponses);
 		var proposal = results[1];
 		var all_good = true;
 		for (var i in proposalResponses) {
