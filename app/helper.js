@@ -5,7 +5,7 @@ logger.setLevel('DEBUG');
 
 var path = require('path');
 var util = require('util');
-var fs = require('graceful-fs');
+var fs = require('fs-extra');
 var User = require('fabric-client/lib/User.js');
 var crypto = require('crypto');
 var FabricCAService = require('fabric-ca-client');
@@ -100,7 +100,6 @@ function readAllFiles(dir) {
 		let file_path = path.join(dir,file_name);
 		let data = fs.readFileSync(file_path);
 		certs.push(data);
-		fs.closeSync(file_path);
 	});
 	return certs;
 }
