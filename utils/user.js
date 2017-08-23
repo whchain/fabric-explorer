@@ -4,8 +4,8 @@
 
 module.exports = {
     items: [
-        {name: 'manufacturer', password: '123456', owner: '茅台'},
-        {name: 'dealer', password: '123456', owner: '茅台专营'},
-        {name: 'user', password: '123456', owner: '用户'},
+        {name: 'manufacturer', password: '123456', owner: 'manufacturer'},
+        {name: 'dealer', password: '123456', owner: 'dealer'},
+        {name: 'user', password: '123456', owner: 'user'}
     ]
 };

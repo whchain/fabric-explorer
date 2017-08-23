@@ -166,7 +166,7 @@ app.post('/channellist', function (req, res) {
     res.send({'channelList': ledgerMgr.getChannellist()})
 })
 
-app.post('/querybyuid', function (req, res) {
+app.post('/verify', function (req, res) {
     var uid = req.body.uid;
     var sess = req.session;
     var loginUser = findUserByName(sess.loginUser);
@@ -176,16 +176,20 @@ app.post('/querybyuid', function (req, res) {
     if (!loginUser) {
         res.status(401).send('not login');
     } else {
-        if ('茅台' === loginUser.owner) {
+        if ('manufacturer' === loginUser.owner) {
             trustchain.queryDevice(uid,'mychannel','mycc').then(function (msg) {
                 if(msg.indexOf("Device not enrolled")>-1){
-                    msg="Device not enrolled"
+                    res.status(400).json({err: "Device not enrolled"});
+                    return
                 }else if(msg.indexOf("Wine not enrolled")>-1){
-                    msg="Wine not enrolled"
+                    res.status(400).json({err: "Wine not enrolled"});
+                    return
                 }else if(msg.indexOf("Device already enrolled")>-1){
-                    msg="Device already enrolled"
+                    res.status(400).json({err: "Device already enrolled"});
+                    return
                 }else if(msg.indexOf("Device already used")>-1){
-                    msg="Device already used"
+                    res.status(400).json({err: "Device already used"});
+                    return
                 }
                 res.status(200).send(msg)
             }).catch(function (e) {
@@ -194,13 +198,17 @@ app.post('/querybyuid', function (req, res) {
         } else {
             trustchain.queryWine(uid,'mychannel','mycc').then(function (msg) {
                 if(msg.indexOf("Device not enrolled")>-1){
-                    msg="Device not enrolled"
+                    res.status(400).json({err: "Device not enrolled"});
+                    return
                 }else if(msg.indexOf("Wine not enrolled")>-1){
-                    msg="Wine not enrolled"
+                    res.status(400).json({err: "Wine not enrolled"});
+                    return
                 }else if(msg.indexOf("Device already enrolled")>-1){
-                    msg="Device already enrolled"
+                    res.status(400).json({err: "Device already enrolled"});
+                    return
                 }else if(msg.indexOf("Device already used")>-1){
-                    msg="Device already used"
+                    res.status(400).json({err: "Device already used"});
+                    return
                 }
                 res.status(200).send(msg)
             }).catch(function (e) {
@@ -210,7 +218,7 @@ app.post('/querybyuid', function (req, res) {
     }
 });
 
-app.post('/wines',function (req,res) {
+app.post('/products',function (req,res) {
     var uid=req.body.uid;
     var owner=req.body.owner;
     var model=req.body.model;
@@ -224,19 +232,23 @@ app.post('/wines',function (req,res) {
     if (!loginUser) {
         res.status(401).send({err:"not login"});
     }else{
-        if(loginUser.owner!=="茅台"){
+        if(loginUser.owner!=="manufacturer"){
             res.status(401).send({err:"invalid user"});
         }
 
         trustchain.enrollWine(uid,owner,model,produceDate,producePlace,outDate,outPlace,'mychannel','mycc').then(function (msg) {
                 if(msg.indexOf("Device not enrolled")>-1){
-                    msg="Device not enrolled"
+                    res.status(400).json({err: "Device not enrolled"});
+                    return
                 }else if(msg.indexOf("Wine not enrolled")>-1){
-                    msg="Wine not enrolled"
+                    res.status(400).json({err: "Wine not enrolled"});
+                    return
                 }else if(msg.indexOf("Device already enrolled")>-1){
-                    msg="Device already enrolled"
+                    res.status(400).json({err: "Device already enrolled"});
+                    return
                 }else if(msg.indexOf("Device already used")>-1){
-                    msg="Device already used"
+                    res.status(400).json({err: "Device already used"});
+                    return
                 }
             res.status(200).send(msg)
         }).catch(function (e) {
@@ -250,13 +262,17 @@ app.post('/devices', function (req,res) {
         var uid=req.body.uid;
         trustchain.enrollDevice(uid,'mychannel','mycc').then(function (msg) {
                 if(msg.indexOf("Device not enrolled")>-1){
-                    msg="Device not enrolled"
+                    res.status(400).json({err: "Device not enrolled"});
+                    return
                 }else if(msg.indexOf("Wine not enrolled")>-1){
-                    msg="Wine not enrolled"
+                    res.status(400).json({err: "Wine not enrolled"});
+                    return
                 }else if(msg.indexOf("Device already enrolled")>-1){
-                    msg="Device already enrolled"
+                    res.status(400).json({err: "Device already enrolled"});
+                    return
                 }else if(msg.indexOf("Device already used")>-1){
-                    msg="Device already used"
+                    res.status(400).json({err: "Device already used"});
+                    return
                 }
             res.status(200).send(msg)
         }).catch(function (e) {
@@ -307,7 +323,7 @@ app.post('/login', function(req, res, next){
         req.session.loginUser=user.name;
         res.send(user)
     }else{
-        res.status(400).json({err: '账号或密码错误'});
+        res.status(400).json({err: 'wrong username or password'});
     }
 });
 
@@ -320,7 +336,7 @@ app.get('/logout', function(req, res, next){
 
     req.session.destroy(function(err) {
         if(err){
-            res.status(400).json({err: '退出登录失败'});
+            res.status(400).json({err: 'logout failed'});
             return;
         }
 

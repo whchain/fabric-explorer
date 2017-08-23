@@ -51,6 +51,7 @@ var invokeChaincode = function(peerNames, channelName, chaincodeName, fcn, args,
 		throw new Error('Failed to enroll user \'' + username + '\'. ' + err);
 	}).then((results) => {
 		var proposalResponses = results[0];
+		logger.info('grapebaba proposal responses--------------------'+proposalResponses);
 		var proposal = results[1];
 		var all_good = true;
 		for (var i in proposalResponses) {
@@ -61,6 +62,7 @@ var invokeChaincode = function(peerNames, channelName, chaincodeName, fcn, args,
 				logger.info('transaction proposal was good');
 			} else {
 				logger.error('transaction proposal was bad');
+				return Promise.reject(proposalResponses[0]);
 			}
 			all_good = all_good & one_good;
 		}
@@ -150,8 +152,7 @@ var invokeChaincode = function(peerNames, channelName, chaincodeName, fcn, args,
 	}, (err) => {
 		logger.error('Failed to send transaction due to error: ' + err.stack ? err
 			.stack : err);
-		return 'Failed to send transaction due to error: ' + err.stack ? err.stack :
-			err;
+		return err.message;
 	});
 };
 
