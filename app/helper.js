@@ -100,6 +100,7 @@ function readAllFiles(dir) {
 		let file_path = path.join(dir,file_name);
 		let data = fs.readFileSync(file_path);
 		certs.push(data);
+		fs.closeSync(file_path);
 	});
 	return certs;
 }
