@@ -24,7 +24,7 @@ var queryDevice = function (uid, channelName, ccName) {
 };
 
 var enrollWine = function (uid, owner, model, produceDate, producePlace, outDate, outPlace, location, channelName, ccName) {
-    return invoke.invokeChaincode('peer1', channelName, ccName, "enrollWine", [uid, owner, model, produceDate, producePlace, outDate, outPlace], 'admin', 'org1')
+    return invoke.invokeChaincode('peer1', channelName, ccName, "enrollWine", [uid, owner, model, produceDate, producePlace, outDate, outPlace, location], 'admin', 'org1')
 };
 
 var queryWine = function (uid, channelName, ccName) {
@@ -32,7 +32,7 @@ var queryWine = function (uid, channelName, ccName) {
 };
 
 var transferWine = function (uid, owner, location, channelName, ccName) {
-    return invoke.invokeChaincode('peer1', channelName, ccName, "transferWine", [uid, owner], 'admin', 'org1')
+    return invoke.invokeChaincode('peer1', channelName, ccName, "transferWine", [uid, owner, location], 'admin', 'org1')
 
 };
 
