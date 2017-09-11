@@ -220,7 +220,6 @@ app.post('/verify', function (req, res) {
 
 app.post('/products', function (req, res) {
     var uid = req.body.uid;
-    var owner = req.body.owner;
     var model = req.body.model;
     var produceDate = req.body.produce_date;
     var producePlace = req.body.produce_place;
@@ -288,6 +287,7 @@ app.put('/products', function (req, res) {
     if (!loginUser) {
         res.status(401).send({err: "not login"});
     } else {
+        console.log("---------loginuser---------"+loginUser.owner);
         if (loginUser.owner !== "dealer") {
             res.status(401).send({err: "invalid user"});
         }
