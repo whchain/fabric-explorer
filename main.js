@@ -283,7 +283,7 @@ app.put('/products', function (req, res) {
     var uid = req.body.uid;
 
     var sess = req.session;
-    var loginUser = sess.loginUser;
+    var loginUser = findUserByName(sess.loginUser);
     if (!loginUser) {
         res.status(401).send({err: "not login"});
     } else {
