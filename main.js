@@ -226,7 +226,6 @@ app.post('/products', function (req, res) {
     var producePlace = req.body.produce_place;
     var outDate = req.body.out_date;
     var outPlace = req.body.out_place;
-    var location = req.body.location;
 
     var sess = req.session;
     var loginUser = findUserByName(sess.loginUser);
@@ -237,7 +236,7 @@ app.post('/products', function (req, res) {
             res.status(401).send({err: "invalid user"});
         }
 
-        trustchain.enrollWine(uid, owner, model, produceDate, producePlace, outDate, outPlace, location, 'mychannel', 'mycc').then(function (msg) {
+        trustchain.enrollWine(uid, loginUser.owner, model, produceDate, producePlace, outDate, outPlace, loginUser.location, 'mychannel', 'mycc').then(function (msg) {
             if (msg.indexOf("Device not enrolled") > -1) {
                 res.status(400).json({err: "Device not enrolled"});
                 return
@@ -281,7 +280,7 @@ app.post('/devices', function (req, res) {
     });
 });
 
-app.put('/wines', function (req, res) {
+app.put('/products', function (req, res) {
     var uid = req.body.uid;
 
     var sess = req.session;
