@@ -170,24 +170,24 @@ app.post('/verify', function (req, res) {
     var uid = req.body.uid;
     var sess = req.session;
     var loginUser = findUserByName(sess.loginUser);
-    logger.info("uid"+uid);
-    logger.info("sess"+sess);
-    logger.info("loginuser"+loginUser);
+    logger.info("uid" + uid);
+    logger.info("sess" + sess);
+    logger.info("loginuser" + loginUser);
     if (!loginUser) {
         res.status(401).send('not login');
     } else {
         if ('manufacturer' === loginUser.owner) {
-            trustchain.queryDevice(uid,'mychannel','mycc').then(function (msg) {
-                if(msg.indexOf("Device not enrolled")>-1){
+            trustchain.queryDevice(uid, 'mychannel', 'mycc').then(function (msg) {
+                if (msg.indexOf("Device not enrolled") > -1) {
                     res.status(400).json({err: "Device not enrolled"});
                     return
-                }else if(msg.indexOf("Wine not enrolled")>-1){
+                } else if (msg.indexOf("Wine not enrolled") > -1) {
                     res.status(400).json({err: "Wine not enrolled"});
                     return
-                }else if(msg.indexOf("Device already enrolled")>-1){
+                } else if (msg.indexOf("Device already enrolled") > -1) {
                     res.status(400).json({err: "Device already enrolled"});
                     return
-                }else if(msg.indexOf("Device already used")>-1){
+                } else if (msg.indexOf("Device already used") > -1) {
                     res.status(400).json({err: "Device already used"});
                     return
                 }
@@ -196,17 +196,17 @@ app.post('/verify', function (req, res) {
                 res.status(400).json({err: e})
             })
         } else {
-            trustchain.queryWine(uid,'mychannel','mycc').then(function (msg) {
-                if(msg.indexOf("Device not enrolled")>-1){
+            trustchain.queryWine(uid, 'mychannel', 'mycc').then(function (msg) {
+                if (msg.indexOf("Device not enrolled") > -1) {
                     res.status(400).json({err: "Device not enrolled"});
                     return
-                }else if(msg.indexOf("Wine not enrolled")>-1){
+                } else if (msg.indexOf("Wine not enrolled") > -1) {
                     res.status(400).json({err: "Wine not enrolled"});
                     return
-                }else if(msg.indexOf("Device already enrolled")>-1){
+                } else if (msg.indexOf("Device already enrolled") > -1) {
                     res.status(400).json({err: "Device already enrolled"});
                     return
-                }else if(msg.indexOf("Device already used")>-1){
+                } else if (msg.indexOf("Device already used") > -1) {
                     res.status(400).json({err: "Device already used"});
                     return
                 }
@@ -218,124 +218,125 @@ app.post('/verify', function (req, res) {
     }
 });
 
-app.post('/products',function (req,res) {
-    var uid=req.body.uid;
-    var owner=req.body.owner;
-    var model=req.body.model;
-    var produceDate=req.body.produce_date;
-    var producePlace=req.body.produce_place;
-    var outDate=req.body.out_date;
-    var outPlace=req.body.out_place;
+app.post('/products', function (req, res) {
+    var uid = req.body.uid;
+    var owner = req.body.owner;
+    var model = req.body.model;
+    var produceDate = req.body.produce_date;
+    var producePlace = req.body.produce_place;
+    var outDate = req.body.out_date;
+    var outPlace = req.body.out_place;
+    var location = req.body.location;
 
     var sess = req.session;
     var loginUser = findUserByName(sess.loginUser);
     if (!loginUser) {
-        res.status(401).send({err:"not login"});
-    }else{
-        if(loginUser.owner!=="manufacturer"){
-            res.status(401).send({err:"invalid user"});
+        res.status(401).send({err: "not login"});
+    } else {
+        if (loginUser.owner !== "manufacturer") {
+            res.status(401).send({err: "invalid user"});
         }
 
-        trustchain.enrollWine(uid,owner,model,produceDate,producePlace,outDate,outPlace,'mychannel','mycc').then(function (msg) {
-                if(msg.indexOf("Device not enrolled")>-1){
-                    res.status(400).json({err: "Device not enrolled"});
-                    return
-                }else if(msg.indexOf("Wine not enrolled")>-1){
-                    res.status(400).json({err: "Wine not enrolled"});
-                    return
-                }else if(msg.indexOf("Device already enrolled")>-1){
-                    res.status(400).json({err: "Device already enrolled"});
-                    return
-                }else if(msg.indexOf("Device already used")>-1){
-                    res.status(400).json({err: "Device already used"});
-                    return
-                }
+        trustchain.enrollWine(uid, owner, model, produceDate, producePlace, outDate, outPlace, location, 'mychannel', 'mycc').then(function (msg) {
+            if (msg.indexOf("Device not enrolled") > -1) {
+                res.status(400).json({err: "Device not enrolled"});
+                return
+            } else if (msg.indexOf("Wine not enrolled") > -1) {
+                res.status(400).json({err: "Wine not enrolled"});
+                return
+            } else if (msg.indexOf("Device already enrolled") > -1) {
+                res.status(400).json({err: "Device already enrolled"});
+                return
+            } else if (msg.indexOf("Device already used") > -1) {
+                res.status(400).json({err: "Device already used"});
+                return
+            }
             res.status(200).send(msg)
         }).catch(function (e) {
-            res.status(400).json({err:e})
+            res.status(400).json({err: e})
         })
     }
 
 });
 
-app.post('/devices', function (req,res) {
-        var uid=req.body.uid;
-        trustchain.enrollDevice(uid,'mychannel','mycc').then(function (msg) {
-                if(msg.indexOf("Device not enrolled")>-1){
-                    res.status(400).json({err: "Device not enrolled"});
-                    return
-                }else if(msg.indexOf("Wine not enrolled")>-1){
-                    res.status(400).json({err: "Wine not enrolled"});
-                    return
-                }else if(msg.indexOf("Device already enrolled")>-1){
-                    res.status(400).json({err: "Device already enrolled"});
-                    return
-                }else if(msg.indexOf("Device already used")>-1){
-                    res.status(400).json({err: "Device already used"});
-                    return
-                }
-            res.status(200).send(msg)
-        }).catch(function (e) {
-            res.status(400).json({err:e})
-        });
+app.post('/devices', function (req, res) {
+    var uid = req.body.uid;
+    trustchain.enrollDevice(uid, 'mychannel', 'mycc').then(function (msg) {
+        if (msg.indexOf("Device not enrolled") > -1) {
+            res.status(400).json({err: "Device not enrolled"});
+            return
+        } else if (msg.indexOf("Wine not enrolled") > -1) {
+            res.status(400).json({err: "Wine not enrolled"});
+            return
+        } else if (msg.indexOf("Device already enrolled") > -1) {
+            res.status(400).json({err: "Device already enrolled"});
+            return
+        } else if (msg.indexOf("Device already used") > -1) {
+            res.status(400).json({err: "Device already used"});
+            return
+        }
+        res.status(200).send(msg)
+    }).catch(function (e) {
+        res.status(400).json({err: e})
+    });
 });
 
-//app.put('/wines',function (req,res) {
-//    var uid=req.body.uid;
-//
-//    var sess = req.session;
-//    var loginUser = sess.loginUser;
-//    if (!loginUser) {
-//        res.status(401).send({err:"not login"});
-//    }else{
-//        if(loginUser.owner!=="dealer"){
-//            res.status(401).send({err:"invalid user"});
-//        }
-//
-//        trustchain.transferWine(uid,loginUser.owner).then(function (msg) {
-//            res.status(200).send(msg)
-//        }).catch(function (e) {
-//            res.status(400).json({err:e})
-//        })
-//    }
-//
-//});
+app.put('/wines', function (req, res) {
+    var uid = req.body.uid;
+
+    var sess = req.session;
+    var loginUser = sess.loginUser;
+    if (!loginUser) {
+        res.status(401).send({err: "not login"});
+    } else {
+        if (loginUser.owner !== "dealer") {
+            res.status(401).send({err: "invalid user"});
+        }
+
+        trustchain.transferWine(uid, loginUser.owner, loginUser.location, 'mychannel', 'mycc').then(function (msg) {
+            res.status(200).send(msg)
+        }).catch(function (e) {
+            res.status(400).json({err: e})
+        })
+    }
+
+});
 
 var users = require('./utils/user').items;
 
-var findUser = function(name, password){
-    return users.find(function(item){
+var findUser = function (name, password) {
+    return users.find(function (item) {
         return item.name === name && item.password === password;
     });
 };
 
-var findUserByName = function(name){
-    return users.find(function(item){
-        return item.name === name ;
+var findUserByName = function (name) {
+    return users.find(function (item) {
+        return item.name === name;
     });
 };
 
 // 登录接口
-app.post('/login', function(req, res, next){
+app.post('/login', function (req, res, next) {
     var user = findUser(req.body.username, req.body.password);
 
-    if(user){
-        req.session.loginUser=user.name;
+    if (user) {
+        req.session.loginUser = user.name;
         res.send(user)
-    }else{
+    } else {
         res.status(400).json({err: 'wrong username or password'});
     }
 });
 
 // 退出登录
-app.get('/logout', function(req, res, next){
+app.get('/logout', function (req, res, next) {
     // 备注：这里用的 session-file-store 在destroy 方法里，并没有销毁cookie
     // 所以客户端的 cookie 还是存在，导致的问题 --> 退出登陆后，服务端检测到cookie
     // 然后去查找对应的 session 文件，报错
     // session-file-store 本身的bug
 
-    req.session.destroy(function(err) {
-        if(err){
+    req.session.destroy(function (err) {
+        if (err) {
             res.status(400).json({err: 'logout failed'});
             return;
         }

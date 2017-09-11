@@ -23,15 +23,15 @@ var queryDevice = function (uid, channelName, ccName) {
     return query.queryChaincode('peer1', channelName, ccName, [uid], "queryDevice", 'admin', 'org1')
 };
 
-var enrollWine = function (uid, owner, model, produceDate, producePlace, outDate, outPlace, channelName, ccName) {
+var enrollWine = function (uid, owner, model, produceDate, producePlace, outDate, outPlace, location, channelName, ccName) {
     return invoke.invokeChaincode('peer1', channelName, ccName, "enrollWine", [uid, owner, model, produceDate, producePlace, outDate, outPlace], 'admin', 'org1')
 };
 
-var queryWine = function (uid,channelName, ccName) {
+var queryWine = function (uid, channelName, ccName) {
     return query.queryChaincode('peer1', channelName, ccName, [uid], "queryWine", 'admin', 'org1')
 };
 
-var transferWine = function (uid, owner,channelName, ccName) {
+var transferWine = function (uid, owner, location, channelName, ccName) {
     return invoke.invokeChaincode('peer1', channelName, ccName, "transferWine", [uid, owner], 'admin', 'org1')
 
 };
