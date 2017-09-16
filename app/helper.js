@@ -93,43 +93,43 @@ function newOrderer(client, channel) {
     }
 }
 
-// function readAllFiles(dir) {
-// 	var files = fs.readdirSync(dir);
-// 	var certs = [];
-// 	files.forEach((file_name) => {
-// 		let file_path = path.join(dir,file_name);
-// 		let data = fs.readFileSync(file_path);
-// 		certs.push(data);
-// 	});
-// 	return certs;
-// }
-
 function readAllFiles(dir) {
-    var certs = [];
-    fs.readdir(dir, function (err, files) {
-        if (err) {
-            console.log(err);
-            throw err;
-        }
-
-        for (const file_name of files) {
-            let file_path = path.join(dir, file_name);
-            console.log(file_path);
-            fs.readFile(file_path, function (err, file) {
-                if (err) {
-                    console.log(err);
-                    throw err;
-                }
-                console.log(file);
-                certs.push(file);
-            });
-        }
-    });
-
-    console.log(certs)
-    console.log(certs[0])
-    return certs;
+	var files = fs.readdirSync(dir);
+	var certs = [];
+	files.forEach((file_name) => {
+		let file_path = path.join(dir,file_name);
+		let data = fs.readFileSync(file_path);
+		certs.push(data);
+	});
+	return certs;
 }
+
+// function readAllFiles(dir) {
+//     var certs = [];
+//     fs.readdir(dir, function (err, files) {
+//         if (err) {
+//             console.log(err);
+//             throw err;
+//         }
+//
+//         for (const file_name of files) {
+//             let file_path = path.join(dir, file_name);
+//             console.log(file_path);
+//             fs.readFile(file_path, function (err, file) {
+//                 if (err) {
+//                     console.log(err);
+//                     throw err;
+//                 }
+//                 console.log(file);
+//                 certs.push(file);
+//             });
+//         }
+//     });
+//
+//     console.log(certs)
+//     console.log(certs[0])
+//     return certs;
+// }
 
 function getOrgName(org) {
     return ORGS[org].name;
