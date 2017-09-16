@@ -5,7 +5,7 @@ logger.setLevel('DEBUG');
 
 var path = require('path');
 var util = require('util');
-var fs = require('fs-extra');
+var fs = require('fs');
 var User = require('fabric-client/lib/User.js');
 var crypto = require('crypto');
 var FabricCAService = require('fabric-ca-client');
