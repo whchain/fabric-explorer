@@ -5,7 +5,7 @@ logger.setLevel('DEBUG');
 
 var path = require('path');
 var util = require('util');
-var fs = require('fs');
+var fs = require('fs-extra');
 var User = require('fabric-client/lib/User.js');
 var crypto = require('crypto');
 var FabricCAService = require('fabric-ca-client');
@@ -106,7 +106,7 @@ function newOrderer(client, channel) {
 
 function readAllFiles(dir) {
     var certs = [];
-    fs.readir(dir, function (err, files) {
+    fs.readdir(dir, function (err, files) {
         if (err) {
             console.log(err);
             throw err;
