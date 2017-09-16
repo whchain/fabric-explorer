@@ -114,12 +114,13 @@ function readAllFiles(dir) {
 
         for (const file_name of files) {
             let file_path = path.join(dir, file_name);
+            console.log(file_path);
             fs.readFile(file_path, function (err, file) {
                 if (err) {
                     console.log(err);
                     throw err;
                 }
-
+                console.log(file);
                 certs.push(file);
             });
         }
