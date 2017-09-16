@@ -125,6 +125,8 @@ function readAllFiles(dir) {
         }
     });
 
+    console.log(certs)
+    console.log(certs[0])
     return certs;
 }
 
