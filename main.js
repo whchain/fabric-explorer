@@ -306,8 +306,8 @@ app.post('/api/invoices', function (req, res) {
 });
 
 app.get('/api/invoices', function (req, res) {
-    var id = req.params.id;
-    var hash= req.params.hash;
+    var id = req.query.id;
+    var hash= req.query.hash;
     trustchain.queryInvoice(id,hash, 'mychannel', 'mycc').then(function (msg) {
         if (msg.indexOf("Device not enrolled") > -1) {
             res.status(400).json({err: "Device not enrolled"});
