@@ -36,10 +36,18 @@ var transferWine = function (uid, owner, location, channelName, ccName) {
 
 };
 
+var enrollInvoice = function (id, hash, channelName, ccName) {
+    return invoke.invokeChaincode('peer1', channelName, ccName, "enrollInvoice", [id, hash], 'admin', 'org1')
+};
+
+var queryInvoice = function (id, hash, channelName, ccName) {
+    return query.queryChaincode('peer1', channelName, ccName, [id, hash], "queryInvoice", 'admin', 'org1')
+};
 
 module.exports.enrollDevice = enrollDevice;
 module.exports.queryDevice = queryDevice;
 module.exports.enrollWine = enrollWine;
 module.exports.queryWine = queryWine;
 module.exports.transferWine = transferWine;
-
+module.exports.enrollInvoice = enrollInvoice;
+module.exports.queryInvoice = queryInvoice;

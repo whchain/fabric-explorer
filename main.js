@@ -279,6 +279,65 @@ app.post('/devices', function (req, res) {
     });
 });
 
+app.post('/api/invoices', function (req, res) {
+    var id = req.body.id;
+    var hash= req.body.hash;
+    trustchain.enrollInvoice(id,hash, 'mychannel', 'mycc').then(function (msg) {
+        if (msg.indexOf("Device not enrolled") > -1) {
+            res.status(400).json({err: "Device not enrolled"});
+            return
+        } else if (msg.indexOf("Wine not enrolled") > -1) {
+            res.status(400).json({err: "Wine not enrolled"});
+            return
+        } else if (msg.indexOf("Device already enrolled") > -1) {
+            res.status(400).json({err: "Device already enrolled"});
+            return
+        } else if (msg.indexOf("Device already used") > -1) {
+            res.status(400).json({err: "Device already used"});
+            return
+        } else if (msg.indexOf("Invoice already enrolled") > -1){
+            res.status(400).json({err: "Invoice already enrolled"});
+            return
+        }
+        res.status(200).send(msg)
+    }).catch(function (e) {
+        res.status(400).json({err: e})
+    });
+});
+
+app.get('/api/invoices', function (req, res) {
+    var id = req.params.id;
+    var hash= req.params.hash;
+    trustchain.queryInvoice(id,hash, 'mychannel', 'mycc').then(function (msg) {
+        if (msg.indexOf("Device not enrolled") > -1) {
+            res.status(400).json({err: "Device not enrolled"});
+            return
+        } else if (msg.indexOf("Wine not enrolled") > -1) {
+            res.status(400).json({err: "Wine not enrolled"});
+            return
+        } else if (msg.indexOf("Device already enrolled") > -1) {
+            res.status(400).json({err: "Device already enrolled"});
+            return
+        } else if (msg.indexOf("Device already used") > -1) {
+            res.status(400).json({err: "Device already used"});
+            return
+        } else if (msg.indexOf("Invoice already enrolled") > -1){
+            res.status(400).json({err: "Invoice already enrolled"});
+            return
+        } else if (msg.indexOf("Invoice not enrolled") > -1){
+            res.status(400).json({err: "Invoice not enrolled"});
+            return
+        }else if (msg.indexOf("Invoice hash not existed") > -1){
+            res.status(400).json({err: "Invoice hash not existed"});
+            return
+        }
+
+        res.status(200).send(msg)
+    }).catch(function (e) {
+        res.status(400).json({err: e})
+    });
+});
+
 app.put('/products', function (req, res) {
     var uid = req.body.uid;
 
